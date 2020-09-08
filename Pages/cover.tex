@@ -1,0 +1,301 @@
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\newenvironment{changemargin}[2]{%
+  \begin{list}{}{%
+    \setlength{\topsep}{0pt}%
+    \setlength{\leftmargin}{#1}%
+    \setlength{\rightmargin}{#2}%
+    \setlength{\listparindent}{\parindent}%
+    \setlength{\itemindent}{\parindent}%
+    \setlength{\parsep}{\parskip}%
+  }%
+  \item[]}{\end{list}}
+
+%%%
+% Configuration management
+%%%
+
+\def\coverTitle{\ttitle}
+\def\coverTitleAlt{\ttitlealt}
+\def\coverAuthor{\authorname}
+\def\coverAdvisor{\adname}
+% \def\coverCollaborator{\texttt{Collaborator is not defined}}
+
+\def\coverPublicationDate{\pubdate}
+
+\def\coverFigure{Figures/Bitmap/escudoUCMcolor}
+\def\coverFigureScale{0.2}
+
+\def\documentType{Master's Thesis}
+
+\def\institution{
+\degreename\\[0.2em]
+\facname\\[0.2em]
+\univname
+}
+
+\def\firstSubtitleTextCover{%
+\textbf{Master's Thesis in Computer Science Engineering}  \\ [0.3em]
+\textbf{\deptname} \\ [0.3em]
+}
+\def\secondSubtitleTextCover{%
+\textbf{Call: }\textit{\textcolor{red}{February/June/September} \the\year} \\ [0.2em]
+\textbf{Grade: }\textit{\textcolor{red}{Grade}}
+}
+
+% ISBN
+% \def\isbn{XXXX-XXXX}
+\def\copyrightInfo{\authorname}
+\def\doubleSidedExplanation{}
+
+%%%
+% Configuration completed
+%%%
+
+%%%
+%% COMMAND TO CREATE THE COVERS.
+%% CONTAINS ALL THE LATEX CODE
+%%%
+\newcommand {\makeCover} {
+
+\ifpdf
+\pdfbookmark{Página de Título}{titulo}
+\fi
+
+%
+% MARGINS
+%
+% In general it is recommended that you DO NOT change the margins. They are
+% chosen by specialists who know about layout and who have studied the best
+% organizations in depth.
+\newlength{\leftShift}
+\setlength{\leftShift}{1in + \hoffset + \oddsidemargin}
+
+\newlength{\rightShift}
+\setlength{\rightShift}{\leftShift + \textwidth}
+\setlength{\rightShift}{\paperwidth - \rightShift}
+
+\newlength{\coverMargin}
+\setlength{\coverMargin}{3.5cm}
+
+\setlength{\leftShift}{\leftShift - \coverMargin}
+\setlength{\rightShift}{\rightShift - \coverMargin}
+
+%%%
+% Cover page
+%%%
+
+\thispagestyle{empty}
+
+\begin{changemargin}{-\leftShift}{-\rightShift}
+
+
+% On the first sheet there is no distinction between odd and even pages
+\newlength{\evensidemarginOriginal}
+\setlength{\evensidemarginOriginal}{\evensidemargin}
+
+\newlength{\oddsidemarginOriginal}
+\setlength{\oddsidemarginOriginal}{\oddsidemargin}
+
+\setlength{\evensidemargin}{0cm}
+\setlength{\oddsidemargin}{0cm}
+
+% Begining the tex...
+\begin{Large}
+\mbox{ }
+\vfill
+
+% Caution: Adjust it if the title changes ...
+\newlength{\longTitle}
+\settowidth{\longTitle}{%
+\textbf{Arquitectura y metodología para el uso }}
+\begin{center}
+\rule{\longTitle}{.5mm}\\
+\vskip 1cm
+\textbf{\coverTitle}\\
+\textbf{\coverTitleAlt}
+\vskip 0.7cm
+\rule{\longTitle}{.5mm}\\
+\end{center}
+\end{Large}
+
+\vfill
+
+\begin{center}
+  \includegraphics[scale=\coverFigureScale]{\coverFigure}
+\end{center}
+
+\vfill
+
+\newcounter{lastyear}
+\setcounter{lastyear}{\the\year}
+\addtocounter{lastyear}{-1}
+
+\begin{center}
+  {\Large \textbf{\documentType}}\\
+  {\Large \textbf{Course \thelastyear--\the\year}}
+  
+\end{center}
+
+\vfill
+
+\begin{large}
+\begin{center}
+{\Large \bfseries Author}\\
+\textbf{\coverAuthor}\\[0.5cm]
+{\Large \bfseries Advisors}\\
+\textbf{\coverAdvisor}\\[0.5cm]
+\ifx\coverCollaborator\undefined
+\mbox{ } \\ \mbox{ } \\
+\else
+{\Large \bfseries Collaborator}\\
+\textbf{\coverCollaborator}\\[0.5cm]
+\fi
+\textbf{\institution}\\[1em]
+%\textbf{\coverPublicationDate}
+\end{center}
+\end{large}
+
+\vfill
+
+\end{changemargin}
+
+\newpage
+
+% Page found on the back side of the cover page.
+% We put the clarification that the document must be printed on both sides.
+\thispagestyle{empty}
+\mbox{ }
+\vfill%space*{4cm}
+\begin{small} 
+\begin{center}
+\mbox{ }
+\end{center}
+\end{small}
+\vspace*{2cm}
+\begin{small} 
+\begin{center}
+\ifx\doubleSidedExplanation\undefined
+\mbox{ }
+\else
+\noindent This document is prepared for double-sided printing.
+\fi
+\end{center}
+\end{small}
+
+%%%
+% Second cover
+%%%
+
+\newpage
+
+\thispagestyle{empty}
+
+\mbox{ }
+
+\begin{Huge}
+\begin{center}
+\coverTitle \\
+\coverTitleAlt
+\end{center}
+\end{Huge}
+
+\vfill
+
+\begin{large}
+\begin{center}
+\firstSubtitleTextCover
+\mbox{ } \\ \mbox{ } \\ 
+{\Large \bfseries Author}\\
+\textbf{\coverAuthor}\\[1.0cm]
+{\Large \bfseries Advisors}\\
+\textbf{\coverAdvisor}\\[0.3cm]
+\ifx\coverCollaborator\undefined
+\mbox{ } \\ \mbox{ } \\
+\else
+{\Large \bfseries Collaborator}\\
+\textbf{\coverCollaborator}\\[0.3cm]
+\fi
+\mbox{ } \\ \mbox{ } \\ 
+\secondSubtitleTextCover \\ [0.3em]
+\end{center}
+\end{large}
+
+\vfill
+
+\begin{large}
+\begin{center}
+\textbf{\institution}\\[0.2em]
+    \mbox{ }  \\
+\textbf{\coverPublicationDate}
+\end{center}
+\end{large}
+
+
+\newpage
+\thispagestyle{empty}
+\mbox{ }
+
+% ISBN and copyright information
+\vskip 13cm
+\ifx\copyrightInfo\undefined
+\mbox{ }
+\else
+Copyright \textcopyright\ \copyrightInfo
+\fi
+\vskip 3cm
+\ifx\isbn\undefined
+\mbox{ }
+\else
+ISBN \isbn
+\fi
+
+} % \newcommand{\makeCover}
+
+% \begin{titlepage}
+% \begin{center}
+
+% \begin{figure}
+% \centering
+% \includegraphics[width=0.15\textwidth]{Figures/ZHAW_Logo.png} % Universtiy Logo, Adapted from: https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/ZHAW_Logo.svg/879px-ZHAW_Logo.svg.png
+% \end{figure}
+
+% \vspace*{.06\textheight}
+% {\scshape\LARGE \univname\par}\vspace{1.5cm} % University name
+% \textsc{\Large Doctoral Thesis}\\[0.5cm] % Thesis type
+
+% \HRule \\[0.4cm] % Horizontal line
+% {\huge \bfseries \ttitle\par}\vspace{0.4cm} % Thesis title
+% \HRule \\[1.5cm] % Horizontal line
+ 
+% \begin{minipage}[t]{0.4\textwidth}
+% \begin{flushleft} \large
+% \emph{Author:}\\
+% \href{http://www.johnsmith.com}{\authorname} % Author name - remove the \href bracket to remove the link
+% \end{flushleft}
+% \end{minipage}
+% \begin{minipage}[t]{0.4\textwidth}
+% \begin{flushright} \large
+% \emph{Advisor:} \\
+% \href{http://www.jamessmith.com}{\adname} % Advisor name - remove the \href bracket to remove the link  
+% \end{flushright}
+% \end{minipage}\\[3cm]
+ 
+% \vfill
+
+% \large \textit{A thesis submitted in fulfillment of the requirements\\ for the degree of \degreename}\\[0.3cm] % University requirement text
+% \textit{in the}\\[0.4cm]
+% \groupname\\\deptname\\[2cm] % Research group name and department name
+ 
+% \vfill
+
+% {\large \today}\\[4cm] % Date
+% %\includegraphics{Logo} % University/department logo - uncomment to place it
+ 
+% \vfill
+% \end{center}
+% \end{titlepage}
+
+\makeCover

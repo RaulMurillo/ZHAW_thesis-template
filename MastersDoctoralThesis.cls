@@ -189,7 +189,7 @@
 %	REQUIRED PACKAGES
 %----------------------------------------------------------------------------------------
 
-\RequirePackage{babel} % Required for automatically changing names of document elements to languages besides english
+% \RequirePackage{babel} % Required for automatically changing names of document elements to languages besides english
 
 \RequirePackage{scrbase} % Required for handling language-dependent names of sections/document elements
 
@@ -220,18 +220,28 @@
  \def\@title{#2}%
  \def\ttitle{#2}%
 }
+\NewDocumentCommand{\thesistitlealt} { o m }{%
+ \IfValueTF{#1}{\def\shorttitlealt{#1}}{\def\shorttitlealt{#2}}%
+ \def\@titlealt{#2}%
+ \def\ttitlealt{#2}%
+}
 \DeclareDocumentCommand{\author}{m}{\newcommand{\authorname}{#1}\renewcommand{\@author}{#1}}
-\NewDocumentCommand{\supervisor}{m}{\newcommand{\supname}{#1}}
+\NewDocumentCommand{\advisor}{m}{\newcommand{\adname}{#1}}
 \NewDocumentCommand{\examiner}{m}{\newcommand{\examname}{#1}}
 \NewDocumentCommand{\degree}{m}{\newcommand{\degreename}{#1}}
+\NewDocumentCommand{\degreealt}{m}{\newcommand{\degreenamealt}{#1}}
 \NewDocumentCommand{\addresses}{m}{\newcommand{\addressname}{#1}}
 \NewDocumentCommand{\university}{m}{\newcommand{\univname}{#1}}
-\NewDocumentCommand{\universitygerman}{m}{\newcommand{\univnameger}{#1}}
+\NewDocumentCommand{\universityalt}{m}{\newcommand{\univnamealt}{#1}}
 \NewDocumentCommand{\department}{m}{\newcommand{\deptname}{#1}}
+\NewDocumentCommand{\departmentalt}{m}{\newcommand{\deptnamealt}{#1}}
 \NewDocumentCommand{\group}{m}{\newcommand{\groupname}{#1}}
 \NewDocumentCommand{\faculty}{m}{\newcommand{\facname}{#1}}
+\NewDocumentCommand{\facultyalt}{m}{\newcommand{\facnamealt}{#1}}
 \NewDocumentCommand{\subject}{m}{\newcommand{\subjectname}{#1}}
 \NewDocumentCommand{\keywords}{m}{\newcommand{\keywordnames}{#1}}
+\NewDocumentCommand{\keywordsalt}{m}{\newcommand{\keywordnamesalt}{#1}}
+\NewDocumentCommand{\publication}{m}{\newcommand{\pubdate}{#1}}
 
 \newcommand{\checktoopen}{% New command to move content to the next page which prints to the next odd page if twosided mode is active  
 	\if@openright\cleardoublepage\else\clearpage\fi
@@ -289,13 +299,14 @@
 	\clearpairofpagestyles%
 	\automark[chapter]{chapter}
 	\ihead{\headmark}% Inner header
-	\ohead[\pagemark]{\pagemark}% Outer header
+	\ohead{\pagemark}% Outer header
 }
 \ifoot{}% Inner footer
 \ofoot{}% Outer footer
 \pagestyle{thesisSimple}
 \providepairofpagestyles[thesisSimple]{thesis}{%
 	\automark*[section]{}%
+	\ofoot[\pagemark]{}
 }
 \providepairofpagestyles[thesisSimple]{review}{%
 	\ofoot[\shorttitle/\authorname]{\shorttitle/\authorname}
@@ -303,6 +314,7 @@
 }
 \pagestyle{thesis}
 \ifbool{headsepline}{\KOMAoption{headsepline}{true}}{}
+% \KOMAoption{plainheadsepline}{true}
 \PreventPackageFromLoading[\ClassError{\classname}{Package `fancyhdr' is
 incompatible\MessageBreak with this class}{The pagesyles are defined 
 	using package `scrlayer-scrpage', please consult the\MessageBreak 
@@ -332,6 +344,7 @@ KOMA-script documentation for details.}]{fancyhdr}
 \newcommand{\abbrevname}{List of Abbreviations}
 \providecaptionname{english,british,american}{\abbrevname}{List of Abbreviations}
 \providecaptionname{ngerman,german,austrian,naustrian}{\abbrevname}{Abk\"urzungsverzeichnis}
+\providecaptionname{spanish}{\abbrevname}{Lista de Acrónimos}
 \NewDocumentEnvironment{abbreviations}{ m }{%
 	\ifbool{nolistspace}{\begingroup\singlespacing}{}
 	\ifbool{listtoc}{\addchap{\abbrevname}}{\addchap*{\abbrevname}}
@@ -350,16 +363,22 @@ KOMA-script documentation for details.}]{fancyhdr}
 \DeclareDocumentCommand{\abstracttitlefont}{}{}
 \newcommand{\byname}{by}
 \newcommand{\vonname}{von}
+\newcommand{\porname}{por}
 \newcommand{\abstractname}{Abstract}
-\newcommand{\extraabstractname}{Zusammenfassung}
+\newcommand{\extraabstractname}{Abstract}
+\providecaptionname{german,ngerman,austrian,naustrian}{\extraabstractname}{Zusammenfassung}
+\providecaptionname{spanish}{\extraabstractname}{Resumen}
 \providecaptionname{german,ngerman,austrian,naustrian}{\byname}{von}
+\providecaptionname{spanish}{\byname}{por}
 \providecaptionname{american,australian,british,canadian,english,newzealand,UKenglish,USenglish}{\byname}{by}
+
 \ifbool{consistentlayout}{
 	\DeclareDocumentEnvironment{abstract}{ O{} }{%
 		\addchap*{\abstractname}%
-		{\chapteralign\normalsize\abstractauthorfont \authorname \par}% Author name
-		\vspace{\baselineskip}
-		{\chapteralign\parbox{.7\linewidth}{\chapteralign\normalsize\itshape\abstracttitlefont\@title}\par}% Thesis title
+		\addsec*{\@title}%
+% 		{\chapteralign\normalsize\abstractauthorfont \authorname \par}% Author name
+% 		\vspace{\baselineskip}
+% 		{\chapteralign\parbox{.7\linewidth}{\chapteralign\normalsize\itshape\abstracttitlefont\@title}\par}% Thesis title
 		\bigskip\noindent\ignorespaces
 	}%
 	{}%end alt-abstract
@@ -390,29 +409,64 @@ KOMA-script documentation for details.}]{fancyhdr}
 	}
 }
 
-\DeclareDocumentEnvironment{extraAbstract}{ O{\null\vfill} }{
-	\checktoopen
-	\tttypeout{\extraabstractname}
-	#1%added to be able to have abstract more than one page long
-	\thispagestyle{empty}
-	\begin{center}
-		{\normalsize \MakeUppercase{\univnameger} \par}% University name in capitals
-		\bigskip
-		{\huge\textit{\extraabstractname} \par}
-		\bigskip
-		{\normalsize \facname \par}% Faculty name
-		{\normalsize \deptname \par}% Department name
-		\bigskip
-		{\normalsize \degreename\par}% Degree name
-		\bigskip
-		{\normalsize\bfseries \@title \par}% Thesis title
-		\medskip
-		{\normalsize \vonname{} \authorname \par}% Author name
-		\bigskip
-	\end{center}
+\ifbool{consistentlayout}{
+	\DeclareDocumentEnvironment{extraAbstract}{ O{} }{%
+		\addchap*{\extraabstractname}%
+		\addsec*{\@titlealt}% Thesis title
+		\bigskip\noindent\ignorespaces
+	}%
+	{}%end alt-abstract
 }
-{
-	\vfill\null
+{%
+    \DeclareDocumentEnvironment{extraAbstract}{ O{\null\vfill} }{
+    	\checktoopen
+    	\tttypeout{\extraabstractname}
+    	#1%added to be able to have abstract more than one page long
+    	\thispagestyle{empty}
+    	\begin{center}
+    		{\normalsize \MakeUppercase{\univnamealt} \par}% University name in capitals
+    		\bigskip
+    		{\huge\textit{\extraabstractname} \par}
+    		\bigskip
+    		{\normalsize \facnamealt \par}% Faculty name
+    		{\normalsize \deptnamealt \par}% Department name
+    		\bigskip
+    		{\normalsize \degreenamealt\par}% Degree name
+    		\bigskip
+    		{\normalsize\bfseries \@titlealt \par}% Thesis title
+    		\medskip
+    		{\normalsize \byname{} \authorname \par}% Author name
+    		\bigskip
+    	\end{center}
+    }
+    {
+    	\vfill\null
+    }
+}
+
+%----------------------------------------------------------------------------------------
+%	KEYWORDS SECTION DESIGN
+%----------------------------------------------------------------------------------------
+
+\newcommand{\keywordstitle}{Keywords}
+\providecaptionname{spanish}{\keywordstitle}{Palabras clave}
+
+\ifbool{consistentlayout}{
+	\DeclareDocumentEnvironment{keywordsSec}{ O{} }{%
+		\addsec*{\keywordstitle}%
+		\noindent
+	}%
+	{}%end alt-abstract
+}{%
+	\DeclareDocumentEnvironment{keywordsSec}{ O{\null\vfill} }{
+        \begin{center}
+            {\LARGE\textit{\keywordstitle} \par}
+            \bigskip
+        \end{center}
+	}
+	{
+		\vfill\null
+	}
 }
 
 %----------------------------------------------------------------------------------------
@@ -424,6 +478,7 @@ KOMA-script documentation for details.}]{fancyhdr}
 \newcommand{\acknowledgementname}{Acknowledgements}
 \providecaptionname{american,australian,british,canadian,english,newzealand,UKenglish,USenglish} {\acknowledgementname}{Acknowledgements} % Acknowledgement text for English countries
 \providecaptionname{german,ngerman,austrian,naustrian}{\acknowledgementname}{Danksagung} % Acknowledgement text for Germanic countries
+\providecaptionname{spanish}{\acknowledgementname}{Agradecimientos} % Acknowledgement text for Spanish countries
 
 \ifbool{consistentlayout}{
 	\DeclareDocumentEnvironment{acknowledgements}{}{%
@@ -452,8 +507,9 @@ KOMA-script documentation for details.}]{fancyhdr}
 \usepackage{xcolor}
 \colorlet{mdtRed}{red!50!black}
 \newcommand{\prefacename}{Preface}
-\providecaptionname{american,australian,british,canadian,english,newzealand,UKenglish,USenglish} {\prefacename}{Preface} % Acknowledgement text for English countries
-\providecaptionname{german,ngerman,austrian,naustrian}{\prefacename}{Vorwort} % Acknowledgement text for Germanic countries
+\providecaptionname{american,australian,british,canadian,english,newzealand,UKenglish,USenglish} {\prefacename}{Preface} % Preface text for English countries
+\providecaptionname{german,ngerman,austrian,naustrian}{\prefacename}{Vorwort} % Preface text for Germanic countries
+\providecaptionname{spanish}{\prefacename}{Prefacio} % Preface text for Spanish countries
 
 \ifbool{consistentlayout}{
 	\DeclareDocumentEnvironment{preface}{}{%
@@ -480,6 +536,7 @@ KOMA-script documentation for details.}]{fancyhdr}
 \newcommand{\authorshipname}{Declaration of Authorship}
 \providecaptionname{american,australian,british,canadian,english,newzealand,UKenglish,USenglish}{\authorshipname}{Declaration of Authorship} % Declaration of Authorship text for English countries
 \providecaptionname{german,ngerman,austrian,naustrian}{\authorshipname}{Eidesstattliche Erkl\"arung} % Declaration of Authorship text for Germanic countries
+\providecaptionname{spanish}{\authorshipname}{Declaración de Autoría} % Declaration of Authorship text for Spanish countries
 
 \ifbool{consistentlayout}{
 	\DeclareDocumentEnvironment{declaration}{}{
@@ -524,8 +581,9 @@ KOMA-script documentation for details.}]{fancyhdr}
 %----------------------------------------------------------------------------------------
 
 \newcommand{\constantsname}{Physical Constants}
-\providecaptionname{english,british,american}{\constantsname}{Physical Constants}
-\providecaptionname{ngerman,german,austrian,naustrian}{\constantsname}{Physikalische Konstanten}
+\providecaptionname{english,british,american}{\constantsname}{Physical Constants} % Physical Constants text for English countries
+\providecaptionname{ngerman,german,austrian,naustrian}{\constantsname}{Physikalische Konstanten} % Physical Constants text for Germanic countries
+\providecaptionname{spanish}{\constantsname}{Constantes Físicas} % Physical Constants text for Spanish countries
 
 \NewDocumentEnvironment{constants}{ m }{%
 	\ifbool{nolistspace}{\begingroup\singlespacing}{}
@@ -542,8 +600,9 @@ KOMA-script documentation for details.}]{fancyhdr}
 %----------------------------------------------------------------------------------------
 
 \newcommand{\symbolsname}{List of Symbols}
-\providecaptionname{english,british,american}{\symbolsname}{List of Symbols}
-\providecaptionname{ngerman,german,austrian,naustrian}{\symbolsname}{Symbolverzeichnis}
+\providecaptionname{english,british,american}{\symbolsname}{List of Symbols} % List of Symbols text for English countries
+\providecaptionname{ngerman,german,austrian,naustrian}{\symbolsname}{Symbolverzeichnis} % List of Symbols text for Germanic countries
+\providecaptionname{spanish}{\symbolsname}{Lista de Símbolos} % List of Symbols text for Spanish countries
 
 \NewDocumentEnvironment{symbols}{ m }{%
 	\ifbool{nolistspace}{\begingroup\singlespacing}{}
